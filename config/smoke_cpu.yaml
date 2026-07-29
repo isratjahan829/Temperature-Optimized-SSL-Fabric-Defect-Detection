@@ -1,0 +1,47 @@
+# Best configuration from the paper: SimCLR + ResNet50 at T = 0.1.
+experiment: smoke_simclr_resnet18
+output_dir: outputs
+seed: 42
+device: auto
+
+data:
+  root: data/sample
+  image_size: 64
+  split: [0.75, 0.15, 0.10]
+  num_workers: 0
+  balanced_sampler: true
+  sobel_prob: 0.2
+  seed: 42
+
+model:
+  backbone: resnet18
+  pretrained: false
+  projection_dim: 128
+  hidden_dim: 2048
+  byol_momentum: 0.996
+  num_prototypes: 128
+  sinkhorn_iterations: 3
+  sinkhorn_epsilon: 0.05
+
+ssl:
+  method: simclr
+  temperature: 0.1
+  optim:
+    optimizer: adam
+    lr: 3.0e-4
+    weight_decay: 1.0e-6
+    batch_size: 16
+    epochs: 2
+    scheduler: cosine
+    warmup_epochs: 0
+    grad_clip: 1.0
+    amp: false
+    patience: 5
+
+eval:
+  linear_epochs: 2
+  finetune_epochs: 2
+  linear_lr: 1.0e-3
+  finetune_lr: 1.0e-4
+  batch_size: 16
+  label_fraction: 1.0
